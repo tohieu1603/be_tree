@@ -16,8 +16,17 @@ public class ArticleRequest {
     @NotBlank(message = "Content is required")
     private String content;
 
+    // Featured Image
     private String featuredImage;
     private String featuredImageAlt;
+    private String featuredImageCaption;
+
+    // Gallery Images - JSON array: [{"url":"...", "alt":"...", "caption":"..."}]
+    private String galleryImages;
+
+    // Open Graph Image (for social sharing)
+    private String ogImage;
+    private String ogImageAlt;
 
     // Tags as comma-separated string
     private String tags;
@@ -37,11 +46,28 @@ public class ArticleRequest {
     // Source/reference
     private String sourceUrl;
 
-    // SEO
-    private String metaTitle;
-    private String metaDescription;
-    private String metaKeywords;
+    // ==================== SEO Fields ====================
+    private String focusKeyword;      // Từ khóa chính
+    private String metaTitle;         // 50-60 ký tự
+    private String metaDescription;   // 150-160 ký tự
+    private String metaKeywords;      // Comma-separated
     private String canonicalUrl;
+
+    // Robots
+    private Boolean robotsIndex;      // default true
+    private Boolean robotsFollow;     // default true
+
+    // Open Graph
+    private String ogTitle;
+    private String ogDescription;
+
+    // Twitter Card
+    private String twitterTitle;
+    private String twitterDescription;
+    private String twitterImage;
+
+    // Schema.org
+    private String schemaType;        // Article, NewsArticle, BlogPosting
 
     private String status;
     private String categoryId;

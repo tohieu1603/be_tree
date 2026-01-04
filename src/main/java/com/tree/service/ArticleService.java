@@ -32,6 +32,7 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final GoogleIndexingService googleIndexingService;
 
     public PageResponse<ArticleResponse> getAllArticles(Pageable pageable) {
         Page<ArticleResponse> page = articleRepository.findAll(pageable)
@@ -105,16 +106,30 @@ public class ArticleService {
                 .contentHtml(MarkdownUtil.markdownToHtml(request.getContent()))
                 .featuredImage(request.getFeaturedImage())
                 .featuredImageAlt(request.getFeaturedImageAlt())
+                .featuredImageCaption(request.getFeaturedImageCaption())
+                .galleryImages(request.getGalleryImages())
+                .ogImage(request.getOgImage())
+                .ogImageAlt(request.getOgImageAlt())
                 .tags(request.getTags())
                 .readingTime(readingTime)
                 .isFeatured(request.getIsFeatured() != null ? request.getIsFeatured() : false)
                 .allowComments(request.getAllowComments() != null ? request.getAllowComments() : true)
                 .publishedAt(request.getPublishedAt())
                 .sourceUrl(request.getSourceUrl())
+                // SEO fields
+                .focusKeyword(request.getFocusKeyword())
                 .metaTitle(request.getMetaTitle() != null ? request.getMetaTitle() : request.getTitle())
                 .metaDescription(request.getMetaDescription())
                 .metaKeywords(request.getMetaKeywords())
                 .canonicalUrl(request.getCanonicalUrl())
+                .robotsIndex(request.getRobotsIndex() != null ? request.getRobotsIndex() : true)
+                .robotsFollow(request.getRobotsFollow() != null ? request.getRobotsFollow() : true)
+                .ogTitle(request.getOgTitle())
+                .ogDescription(request.getOgDescription())
+                .twitterTitle(request.getTwitterTitle())
+                .twitterDescription(request.getTwitterDescription())
+                .twitterImage(request.getTwitterImage())
+                .schemaType(request.getSchemaType() != null ? request.getSchemaType() : "Article")
                 .status(request.getStatus() != null ? Status.valueOf(request.getStatus()) : Status.DRAFT)
                 .author(author)
                 .viewCount(0L)
@@ -133,6 +148,11 @@ public class ArticleService {
 
         articleRepository.save(article);
         log.info("Article created: {}", article.getId());
+
+        // Notify Google if published
+        if (article.getStatus() == Status.PUBLISHED) {
+            googleIndexingService.notifyArticlePublished(article.getSlug());
+        }
 
         return ArticleResponse.from(article);
     }
@@ -158,6 +178,10 @@ public class ArticleService {
         article.setContentHtml(MarkdownUtil.markdownToHtml(request.getContent()));
         article.setFeaturedImage(request.getFeaturedImage());
         article.setFeaturedImageAlt(request.getFeaturedImageAlt());
+        article.setFeaturedImageCaption(request.getFeaturedImageCaption());
+        article.setGalleryImages(request.getGalleryImages());
+        article.setOgImage(request.getOgImage());
+        article.setOgImageAlt(request.getOgImageAlt());
         article.setTags(request.getTags());
         article.setSourceUrl(request.getSourceUrl());
 
@@ -179,10 +203,26 @@ public class ArticleService {
             article.setPublishedAt(request.getPublishedAt());
         }
 
+        // SEO fields
+        article.setFocusKeyword(request.getFocusKeyword());
         article.setMetaTitle(request.getMetaTitle());
         article.setMetaDescription(request.getMetaDescription());
         article.setMetaKeywords(request.getMetaKeywords());
         article.setCanonicalUrl(request.getCanonicalUrl());
+        if (request.getRobotsIndex() != null) {
+            article.setRobotsIndex(request.getRobotsIndex());
+        }
+        if (request.getRobotsFollow() != null) {
+            article.setRobotsFollow(request.getRobotsFollow());
+        }
+        article.setOgTitle(request.getOgTitle());
+        article.setOgDescription(request.getOgDescription());
+        article.setTwitterTitle(request.getTwitterTitle());
+        article.setTwitterDescription(request.getTwitterDescription());
+        article.setTwitterImage(request.getTwitterImage());
+        if (request.getSchemaType() != null) {
+            article.setSchemaType(request.getSchemaType());
+        }
 
         if (request.getStatus() != null) {
             Status newStatus = Status.valueOf(request.getStatus());
@@ -204,6 +244,11 @@ public class ArticleService {
         articleRepository.save(article);
         log.info("Article updated: {}", id);
 
+        // Notify Google if published
+        if (article.getStatus() == Status.PUBLISHED) {
+            googleIndexingService.notifyArticlePublished(article.getSlug());
+        }
+
         return ArticleResponse.from(article);
     }
 
@@ -211,12 +256,19 @@ public class ArticleService {
     public void delete(UUID id) {
         log.info("Deleting article: {}", id);
 
-        if (!articleRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Article", "id", id);
-        }
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Article", "id", id));
 
-        articleRepository.deleteById(id);
+        String slug = article.getSlug();
+        boolean wasPublished = article.getStatus() == Status.PUBLISHED;
+
+        articleRepository.delete(article);
         log.info("Article deleted: {}", id);
+
+        // Notify Google if was published
+        if (wasPublished) {
+            googleIndexingService.notifyArticleDeleted(slug);
+        }
     }
 
     public String convertHtmlToMarkdown(String html) {
