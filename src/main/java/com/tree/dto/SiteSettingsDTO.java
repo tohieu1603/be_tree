@@ -12,6 +12,7 @@ import java.util.List;
 public class SiteSettingsDTO {
     // Basic Info
     private String siteName;
+    private String siteUrl;
     private String siteTagline;
     private String siteDescription;
 

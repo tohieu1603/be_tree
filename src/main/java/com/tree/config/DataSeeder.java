@@ -76,14 +76,14 @@ public class DataSeeder implements CommandLineRunner {
     private void seedUsers() {
         if (userRepository.count() == 0) {
             User admin = User.builder()
-                    .email("admin@tramhuong.vn")
+                    .email("admin@tree.com")
                     .password(passwordEncoder.encode("admin123"))
-                    .fullName("Quản trị viên")
+                    .fullName("Admin")
                     .role(User.Role.ADMIN)
                     .active(true)
                     .build();
             userRepository.save(admin);
-            log.info("Seeded admin user: admin@tramhuong.vn / admin123");
+            log.info("Seeded admin user: admin@tree.com / admin123");
         }
     }
 
@@ -449,7 +449,7 @@ public class DataSeeder implements CommandLineRunner {
 
     private void seedArticles() {
         if (articleRepository.count() == 0) {
-            User admin = userRepository.findByEmail("admin@tramhuong.vn").orElse(null);
+            User admin = userRepository.findByEmail("admin@tree.com").orElse(null);
             Category kienThuc = categoryRepository.findBySlug("kien-thuc-tram-huong").orElse(null);
             Category phongThuy = categoryRepository.findBySlug("phong-thuy").orElse(null);
             Category tinTuc = categoryRepository.findBySlug("tin-tuc").orElse(null);

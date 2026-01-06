@@ -43,6 +43,7 @@ public class SiteSettingsService {
     private SiteSettingsDTO getDefaultSettings() {
         SiteSettingsDTO dto = new SiteSettingsDTO();
         dto.setSiteName("Duc Viet");
+        dto.setSiteUrl("https://tramducviet.com");
         dto.setSiteTagline("Tinh Hoa Tram Huong");
         dto.setSiteDescription("Chuyen cung cap vong tay tram huong, tuong phat, nhang tram, tinh dau tram huong thien nhien 100%");
         dto.setHeroTitle("TRAM HUONG");
@@ -82,6 +83,7 @@ public class SiteSettingsService {
 
     private void updateFromDTO(SiteSettings settings, SiteSettingsDTO dto) {
         settings.setSiteName(dto.getSiteName());
+        settings.setSiteUrl(dto.getSiteUrl());
         settings.setSiteTagline(dto.getSiteTagline());
         settings.setSiteDescription(dto.getSiteDescription());
         settings.setLogoUrl(dto.getLogoUrl());
@@ -116,6 +118,7 @@ public class SiteSettingsService {
     private SiteSettingsDTO toDTO(SiteSettings settings) {
         SiteSettingsDTO dto = new SiteSettingsDTO();
         dto.setSiteName(settings.getSiteName());
+        dto.setSiteUrl(settings.getSiteUrl());
         dto.setSiteTagline(settings.getSiteTagline());
         dto.setSiteDescription(settings.getSiteDescription());
         dto.setLogoUrl(settings.getLogoUrl());

@@ -18,6 +18,9 @@ public class SiteSettings extends BaseEntity {
     @Column(name = "site_name", nullable = false)
     private String siteName = "Tree";
 
+    @Column(name = "site_url")
+    private String siteUrl;
+
     @Column(name = "site_tagline")
     private String siteTagline;
 
