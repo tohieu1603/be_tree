@@ -6,6 +6,13 @@ INSERT INTO users (id, email, password, full_name, role, active, created_at, upd
 SELECT 'a0000000-0000-0000-0000-000000000001', 'admin@tree.com', '$2a$10$N9qo8uLOickgx2ZMRZoMy.Mrq4H1cQFyVJxYv4y1rDNbMd1D6kMJO', 'Admin', 'ADMIN', true, NOW(), NOW()
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@tree.com');
 
+-- Create banners
+INSERT INTO banners (id, title, subtitle, button_text, button_link, image_url, sort_order, active, created_at, updated_at) VALUES
+('d0000000-0000-0000-0000-000000000001', 'Tuong Go Nghe Thuat', 'Tuong go dieu khac thu cong, mang dam ban sac van hoa Viet', 'Xem San Pham', '/products', 'https://images.unsplash.com/photo-1609167830220-7164aa360951?w=1600&q=80', 1, true, NOW(), NOW()),
+('d0000000-0000-0000-0000-000000000002', 'Dieu Khac Thu Cong', 'Moi tac pham la mot tac pham nghe thuat doc nhat vo nhi', 'Lien He', '/contact', 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=1600&q=80', 2, true, NOW(), NOW()),
+('d0000000-0000-0000-0000-000000000003', 'Go Quy Tu Nhien', 'Go huong, go trac, go cam lai - chat luong cao cap', 'Xem Them', '/products', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=80', 3, true, NOW(), NOW())
+ON CONFLICT (id) DO NOTHING;
+
 -- Create categories
 INSERT INTO categories (id, name, slug, description, active, sort_order, created_at, updated_at) VALUES
 ('c0000000-0000-0000-0000-000000000001', 'Cong nghe', 'cong-nghe', 'Tin tuc va bai viet ve cong nghe, lap trinh, AI', true, 1, NOW(), NOW()),
@@ -1346,3 +1353,8 @@ Dac diem noi bat:
 
 Kich thuoc: 140 x 70 x 75 cm', 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=80', 'https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=800&q=80', 8500000, 10000000, 'BLV-SOI-001', '140 x 70 x 75 cm', 'Go soi + Sat son tinh dien', 'Go tu nhien + Den', 45, 12, false, true, 'Ban lam viec go soi chan sat | Tree Furniture', 'Ban lam viec go soi nguyen tam, thiet ke hien dai, phu hop home office', 'ban lam viec, go soi, ban go, noi that van phong', 750, 'c1000000-0000-0000-0000-000000000001', NOW(), NOW())
 ON CONFLICT (slug) DO NOTHING;
+
+-- Site Settings
+INSERT INTO site_settings (id, site_name, site_tagline, site_description, logo_url, logo_dark_url, favicon_url, contact_email, contact_phone, contact_address, facebook_url, instagram_url, youtube_url, tiktok_url, zalo_url, footer_text, copyright_text, hero_title, hero_subtitle, category_section_title, category_section_subtitle, service_section_title, services_json, created_at, updated_at) VALUES
+('e0000000-0000-0000-0000-000000000001', 'Duc Viet', 'Tinh Hoa Tram Huong', 'Chuyen cung cap vong tay tram huong, tuong phat, nhang tram, tinh dau tram huong thien nhien 100%', '/uploads/logo.png', '/uploads/logo-dark.png', '/uploads/favicon.ico', 'contact@ducviet.com', '0909 123 456', '123 Nguyen Hue, Quan 1, TP.HCM', 'https://facebook.com/ducviet', 'https://instagram.com/ducviet', 'https://youtube.com/@ducviet', 'https://tiktok.com/@ducviet', 'https://zalo.me/ducviet', 'Duc Viet - Tinh hoa tram huong Viet Nam', '2024 Duc Viet. All rights reserved.', 'DUC VIET', 'Tinh Hoa Thien Nhien Viet Nam', 'Tinh Hoa Tram Huong', 'Curated By Duc Viet', 'DUC VIET SERVICES', '[{"title":"GIAO HANG TAN NOI","description":"Mien phi giao hang toan quoc cho don hang tu 2 trieu dong.","imageUrl":"/uploads/products/vong-tay-tram-huong-2.jpg","linkText":"Tim Hieu Them","linkUrl":"/about"},{"title":"TU VAN CHUYEN GIA","description":"Doi ngu chuyen gia tram huong tu van mien phi.","imageUrl":"/uploads/products/tuong-phat-tram-huong-1.jpg","linkText":"Lien He Ngay","linkUrl":"/contact"},{"title":"BAO HANH TRON DOI","description":"Cam ket bao hanh tron doi cho tat ca san pham tram huong.","imageUrl":"/uploads/products/nhang-tram-huong.jpg","linkText":"Chinh Sach Bao Hanh","linkUrl":"/warranty"}]', NOW(), NOW())
+ON CONFLICT (id) DO NOTHING;

@@ -20,8 +20,12 @@ public class ArticleResponse {
     private String summary;
     private String content;
     private String contentHtml;
+    private String contentBlocks;      // JSON - for block editor
+    private String tableOfContents;    // JSON - auto-generated from headings
     private String featuredImage;
     private String featuredImageAlt;
+    private Integer featuredImageWidth;
+    private Integer featuredImageHeight;
     private String featuredImageCaption;
     private String galleryImages;
     private String ogImage;
@@ -74,8 +78,12 @@ public class ArticleResponse {
                 .summary(article.getSummary())
                 .content(article.getContent())
                 .contentHtml(article.getContentHtml())
+                .contentBlocks(article.getContentBlocks())
+                .tableOfContents(article.getTableOfContents())
                 .featuredImage(article.getFeaturedImage())
                 .featuredImageAlt(article.getFeaturedImageAlt())
+                .featuredImageWidth(article.getFeaturedImageWidth())
+                .featuredImageHeight(article.getFeaturedImageHeight())
                 .featuredImageCaption(article.getFeaturedImageCaption())
                 .galleryImages(article.getGalleryImages())
                 .ogImage(article.getOgImage())

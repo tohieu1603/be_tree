@@ -1,15 +1,19 @@
 package com.tree.controller;
 
 import com.tree.dto.ApiResponse;
+import com.tree.dto.BannerDTO;
 import com.tree.dto.PageResponse;
+import com.tree.dto.SiteSettingsDTO;
 import com.tree.dto.article.ArticleResponse;
 import com.tree.dto.category.CategoryResponse;
 import com.tree.dto.product.ProductResponse;
 import com.tree.dto.seo.SeoSettingsResponse;
 import com.tree.service.ArticleService;
+import com.tree.service.BannerService;
 import com.tree.service.CategoryService;
 import com.tree.service.ProductService;
 import com.tree.service.SeoSettingsService;
+import com.tree.service.SiteSettingsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +33,23 @@ import java.util.UUID;
 public class PublicController {
 
     private final ArticleService articleService;
+    private final BannerService bannerService;
     private final CategoryService categoryService;
     private final ProductService productService;
     private final SeoSettingsService seoSettingsService;
+    private final SiteSettingsService siteSettingsService;
+
+    @GetMapping("/site-settings")
+    @Operation(summary = "Get site settings")
+    public ResponseEntity<ApiResponse<SiteSettingsDTO>> getSiteSettings() {
+        return ResponseEntity.ok(ApiResponse.success(siteSettingsService.getSettings()));
+    }
+
+    @GetMapping("/banners")
+    @Operation(summary = "Get active banners")
+    public ResponseEntity<ApiResponse<List<BannerDTO>>> getBanners() {
+        return ResponseEntity.ok(ApiResponse.success(bannerService.getActiveBanners()));
+    }
 
     @GetMapping("/articles")
     @Operation(summary = "Get published articles")

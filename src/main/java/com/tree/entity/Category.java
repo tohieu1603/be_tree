@@ -25,6 +25,9 @@ public class Category extends BaseEntity {
 
     private String icon;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Column(name = "sort_order")
     private Integer sortOrder = 0;
 

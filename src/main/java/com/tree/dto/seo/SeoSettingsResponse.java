@@ -41,7 +41,7 @@ public class SeoSettingsResponse {
             return getDefault();
         }
         return SeoSettingsResponse.builder()
-                .id(settings.getId().toString())
+                .id(settings.getId() != null ? settings.getId().toString() : null)
                 .siteName(settings.getSiteName())
                 .siteUrl(settings.getSiteUrl())
                 .metaTitle(settings.getMetaTitle())
@@ -58,8 +58,8 @@ public class SeoSettingsResponse {
                 .googleVerification(settings.getGoogleVerification())
                 .ogImage(settings.getOgImage())
                 .twitterHandle(settings.getTwitterHandle())
-                .createdAt(settings.getCreatedAt().toString())
-                .updatedAt(settings.getUpdatedAt().toString())
+                .createdAt(settings.getCreatedAt() != null ? settings.getCreatedAt().toString() : null)
+                .updatedAt(settings.getUpdatedAt() != null ? settings.getUpdatedAt().toString() : null)
                 .build();
     }
 

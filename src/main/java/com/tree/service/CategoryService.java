@@ -83,6 +83,7 @@ public class CategoryService {
                 .slug(slug)
                 .description(request.getDescription())
                 .icon(request.getIcon())
+                .imageUrl(request.getImageUrl())
                 .sortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0)
                 .active(request.getActive() != null ? request.getActive() : true)
                 .parent(parent)
@@ -115,6 +116,9 @@ public class CategoryService {
         }
         if (request.getIcon() != null) {
             category.setIcon(request.getIcon());
+        }
+        if (request.getImageUrl() != null) {
+            category.setImageUrl(request.getImageUrl());
         }
         if (request.getSortOrder() != null) {
             category.setSortOrder(request.getSortOrder());

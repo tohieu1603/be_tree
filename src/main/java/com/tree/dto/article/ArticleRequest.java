@@ -16,9 +16,17 @@ public class ArticleRequest {
     @NotBlank(message = "Content is required")
     private String content;
 
+    // Content blocks as JSON - for block editor
+    private String contentBlocks;
+
+    // Table of contents as JSON - auto-generated from headings
+    private String tableOfContents;
+
     // Featured Image
     private String featuredImage;
     private String featuredImageAlt;
+    private Integer featuredImageWidth;
+    private Integer featuredImageHeight;
     private String featuredImageCaption;
 
     // Gallery Images - JSON array: [{"url":"...", "alt":"...", "caption":"..."}]

@@ -33,6 +33,7 @@ public class ArticleService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final GoogleIndexingService googleIndexingService;
+    private final IndexNowService indexNowService;
 
     public PageResponse<ArticleResponse> getAllArticles(Pageable pageable) {
         Page<ArticleResponse> page = articleRepository.findAll(pageable)
@@ -106,6 +107,8 @@ public class ArticleService {
                 .contentHtml(MarkdownUtil.markdownToHtml(request.getContent()))
                 .featuredImage(request.getFeaturedImage())
                 .featuredImageAlt(request.getFeaturedImageAlt())
+                .featuredImageWidth(request.getFeaturedImageWidth())
+                .featuredImageHeight(request.getFeaturedImageHeight())
                 .featuredImageCaption(request.getFeaturedImageCaption())
                 .galleryImages(request.getGalleryImages())
                 .ogImage(request.getOgImage())
@@ -149,9 +152,10 @@ public class ArticleService {
         articleRepository.save(article);
         log.info("Article created: {}", article.getId());
 
-        // Notify Google if published
+        // Notify search engines if published
         if (article.getStatus() == Status.PUBLISHED) {
             googleIndexingService.notifyArticlePublished(article.getSlug());
+            indexNowService.notifyArticlePublished(article.getSlug());
         }
 
         return ArticleResponse.from(article);
@@ -176,8 +180,12 @@ public class ArticleService {
         article.setSummary(request.getSummary());
         article.setContent(request.getContent());
         article.setContentHtml(MarkdownUtil.markdownToHtml(request.getContent()));
+        article.setContentBlocks(request.getContentBlocks());
+        article.setTableOfContents(request.getTableOfContents());
         article.setFeaturedImage(request.getFeaturedImage());
         article.setFeaturedImageAlt(request.getFeaturedImageAlt());
+        article.setFeaturedImageWidth(request.getFeaturedImageWidth());
+        article.setFeaturedImageHeight(request.getFeaturedImageHeight());
         article.setFeaturedImageCaption(request.getFeaturedImageCaption());
         article.setGalleryImages(request.getGalleryImages());
         article.setOgImage(request.getOgImage());
@@ -244,9 +252,10 @@ public class ArticleService {
         articleRepository.save(article);
         log.info("Article updated: {}", id);
 
-        // Notify Google if published
+        // Notify search engines if published
         if (article.getStatus() == Status.PUBLISHED) {
             googleIndexingService.notifyArticlePublished(article.getSlug());
+            indexNowService.notifyArticlePublished(article.getSlug());
         }
 
         return ArticleResponse.from(article);

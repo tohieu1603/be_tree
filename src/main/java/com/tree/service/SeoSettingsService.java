@@ -5,9 +5,11 @@ import com.tree.dto.seo.SeoSettingsResponse;
 import com.tree.entity.SeoSettings;
 import com.tree.repository.SeoSettingsRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SeoSettingsService {
@@ -21,10 +23,20 @@ public class SeoSettingsService {
 
     @Transactional
     public SeoSettingsResponse saveSettings(SeoSettingsRequest request) {
+        log.info("Saving SEO settings: siteName={}, siteUrl={}", request.getSiteName(), request.getSiteUrl());
+
         SeoSettings settings = seoSettingsRepository.getSettings();
 
         if (settings == null) {
-            settings = new SeoSettings();
+            log.info("Creating new SEO settings record");
+            settings = SeoSettings.builder()
+                    .robotsAllowAll(true)
+                    .robotsDisallowPaths("/admin/,/api/")
+                    .sitemapEnabled(true)
+                    .sitemapIncludeArticles(true)
+                    .sitemapIncludeCategories(true)
+                    .sitemapChangeFrequency("weekly")
+                    .build();
         }
 
         settings.setSiteName(request.getSiteName());
@@ -48,7 +60,13 @@ public class SeoSettingsService {
         settings.setOgImage(request.getOgImage());
         settings.setTwitterHandle(request.getTwitterHandle());
 
-        settings = seoSettingsRepository.save(settings);
-        return SeoSettingsResponse.from(settings);
+        try {
+            settings = seoSettingsRepository.save(settings);
+            log.info("SEO settings saved successfully with id={}", settings.getId());
+            return SeoSettingsResponse.from(settings);
+        } catch (Exception e) {
+            log.error("Error saving SEO settings", e);
+            throw e;
+        }
     }
 }

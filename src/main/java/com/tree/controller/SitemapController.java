@@ -27,6 +27,9 @@ public class SitemapController {
     @Value("${app.site-url:http://localhost:3000}")
     private String siteUrl;
 
+    @Value("${indexnow.key:}")
+    private String indexNowKey;
+
     @GetMapping(value = "/sitemap.xml", produces = MediaType.APPLICATION_XML_VALUE)
     @Operation(summary = "Generate sitemap.xml")
     public ResponseEntity<String> getSitemap() {
@@ -88,6 +91,17 @@ public class SitemapController {
         return ResponseEntity.ok()
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(robots);
+    }
+
+    @GetMapping(value = "/{key}.txt", produces = MediaType.TEXT_PLAIN_VALUE)
+    @Operation(summary = "IndexNow key verification file")
+    public ResponseEntity<String> getIndexNowKey(@org.springframework.web.bind.annotation.PathVariable String key) {
+        if (indexNowKey == null || indexNowKey.isBlank() || !indexNowKey.equals(key)) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(indexNowKey);
     }
 
     private String escapeXml(String value) {

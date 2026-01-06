@@ -29,12 +29,26 @@ public class Article extends BaseEntity {
     @Column(name = "content_html", columnDefinition = "TEXT")
     private String contentHtml;
 
+    // Content blocks as JSON - for block editor
+    @Column(name = "content_blocks", columnDefinition = "TEXT")
+    private String contentBlocks;
+
+    // Table of contents as JSON - auto-generated from headings
+    @Column(name = "table_of_contents", columnDefinition = "TEXT")
+    private String tableOfContents;
+
     // Featured Image (ảnh đại diện)
     @Column(name = "featured_image")
     private String featuredImage;
 
     @Column(name = "featured_image_alt")
     private String featuredImageAlt;
+
+    @Column(name = "featured_image_width")
+    private Integer featuredImageWidth;
+
+    @Column(name = "featured_image_height")
+    private Integer featuredImageHeight;
 
     @Column(name = "featured_image_caption")
     private String featuredImageCaption;
