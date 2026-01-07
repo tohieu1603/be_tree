@@ -47,6 +47,15 @@ public class SiteSettingsDTO {
     // Services
     private List<ServiceItem> services;
 
+    // Navigation Menu
+    private List<MenuItem> navLeftMenu;
+    private List<MenuItem> navRightMenu;
+
+    // Theme Settings
+    private String fontPreset;
+    private String colorPalette;
+    private String borderRadius;
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -56,5 +65,13 @@ public class SiteSettingsDTO {
         private String imageUrl;
         private String linkText;
         private String linkUrl;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MenuItem {
+        private String label;
+        private String href;
     }
 }

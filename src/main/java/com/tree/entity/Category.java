@@ -28,6 +28,13 @@ public class Category extends BaseEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
+    // Section display settings for homepage
+    @Column(name = "section_title")
+    private String sectionTitle;
+
+    @Column(name = "section_subtitle")
+    private String sectionSubtitle;
+
     @Column(name = "sort_order")
     private Integer sortOrder = 0;
 

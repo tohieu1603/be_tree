@@ -13,4 +13,6 @@ public interface BannerRepository extends JpaRepository<Banner, UUID> {
     List<Banner> findByActiveTrueOrderBySortOrderAsc();
 
     List<Banner> findAllByOrderBySortOrderAsc();
+
+    List<Banner> findByActiveTrueAndBannerTypeOrderBySortOrderAsc(String bannerType);
 }

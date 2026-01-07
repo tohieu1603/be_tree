@@ -89,4 +89,25 @@ public class SiteSettings extends BaseEntity {
     // Services (JSON array stored as text)
     @Column(name = "services_json", columnDefinition = "TEXT")
     private String servicesJson;
+
+    // Navigation Menu (JSON arrays for menu items)
+    // Each item: { label, href }
+    @Column(name = "nav_left_menu_json", columnDefinition = "TEXT")
+    private String navLeftMenuJson;
+
+    @Column(name = "nav_right_menu_json", columnDefinition = "TEXT")
+    private String navRightMenuJson;
+
+    // Theme Settings
+    // Font preset: elegant, modern, minimal, luxury, classic, artistic
+    @Column(name = "font_preset")
+    private String fontPreset = "elegant";
+
+    // Color palette: warmGold, deepBrown, honeyAmber, antiqueGold, rosewood, sandalwood
+    @Column(name = "color_palette")
+    private String colorPalette = "warmGold";
+
+    // Border radius preset: none, subtle, rounded, pill
+    @Column(name = "border_radius")
+    private String borderRadius = "subtle";
 }

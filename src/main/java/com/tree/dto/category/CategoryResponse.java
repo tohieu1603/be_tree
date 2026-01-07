@@ -21,6 +21,8 @@ public class CategoryResponse {
     private String description;
     private String icon;
     private String imageUrl;
+    private String sectionTitle;
+    private String sectionSubtitle;
     private Integer sortOrder;
     private boolean active;
     private int articleCount;
@@ -40,6 +42,8 @@ public class CategoryResponse {
                 .description(category.getDescription())
                 .icon(category.getIcon())
                 .imageUrl(category.getImageUrl())
+                .sectionTitle(category.getSectionTitle())
+                .sectionSubtitle(category.getSectionSubtitle())
                 .sortOrder(category.getSortOrder())
                 .active(category.isActive())
                 .articleCount(category.getArticles() != null ? category.getArticles().size() : 0)

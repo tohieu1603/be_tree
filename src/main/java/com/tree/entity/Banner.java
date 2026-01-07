@@ -26,8 +26,25 @@ public class Banner extends BaseEntity {
     @Column(name = "button_link")
     private String buttonLink;
 
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url")
     private String imageUrl;
+
+    // JSON array of slide objects for carousel
+    // Each slide: { imageUrl, title, subtitle, buttonText, buttonLink }
+    @Column(name = "slides_json", columnDefinition = "TEXT")
+    private String slidesJson;
+
+    // Legacy: JSON array of image URLs (for backward compatibility)
+    @Column(name = "images_json", columnDefinition = "TEXT")
+    private String imagesJson;
+
+    // Banner type: HERO (main slideshow), EDITORIAL (mid-page banner)
+    @Column(name = "banner_type")
+    private String bannerType = "HERO";
+
+    // Label text for editorial banner (e.g., "VONG TAY")
+    @Column(name = "label_text")
+    private String labelText;
 
     @Column(name = "sort_order")
     private Integer sortOrder = 0;

@@ -78,6 +78,22 @@ public class SiteSettingsService {
         ));
         dto.setServices(services);
 
+        // Default navigation menu
+        List<SiteSettingsDTO.MenuItem> leftMenu = new ArrayList<>();
+        leftMenu.add(new SiteSettingsDTO.MenuItem("Bộ Sưu Tập", "/products"));
+        leftMenu.add(new SiteSettingsDTO.MenuItem("Câu Chuyện", "/articles"));
+        dto.setNavLeftMenu(leftMenu);
+
+        List<SiteSettingsDTO.MenuItem> rightMenu = new ArrayList<>();
+        rightMenu.add(new SiteSettingsDTO.MenuItem("Về Chúng Tôi", "/about"));
+        rightMenu.add(new SiteSettingsDTO.MenuItem("Liên Hệ", "/contact"));
+        dto.setNavRightMenu(rightMenu);
+
+        // Default theme settings
+        dto.setFontPreset("elegant");
+        dto.setColorPalette("warmGold");
+        dto.setBorderRadius("subtle");
+
         return dto;
     }
 
@@ -113,6 +129,27 @@ public class SiteSettingsService {
                 log.error("Error serializing services", e);
             }
         }
+
+        // Convert navigation menu to JSON
+        if (dto.getNavLeftMenu() != null) {
+            try {
+                settings.setNavLeftMenuJson(objectMapper.writeValueAsString(dto.getNavLeftMenu()));
+            } catch (JsonProcessingException e) {
+                log.error("Error serializing navLeftMenu", e);
+            }
+        }
+        if (dto.getNavRightMenu() != null) {
+            try {
+                settings.setNavRightMenuJson(objectMapper.writeValueAsString(dto.getNavRightMenu()));
+            } catch (JsonProcessingException e) {
+                log.error("Error serializing navRightMenu", e);
+            }
+        }
+
+        // Theme settings
+        settings.setFontPreset(dto.getFontPreset() != null ? dto.getFontPreset() : "elegant");
+        settings.setColorPalette(dto.getColorPalette() != null ? dto.getColorPalette() : "warmGold");
+        settings.setBorderRadius(dto.getBorderRadius() != null ? dto.getBorderRadius() : "subtle");
     }
 
     private SiteSettingsDTO toDTO(SiteSettings settings) {
@@ -155,6 +192,42 @@ public class SiteSettingsService {
         } else {
             dto.setServices(new ArrayList<>());
         }
+
+        // Parse navigation menu JSON
+        if (settings.getNavLeftMenuJson() != null && !settings.getNavLeftMenuJson().isEmpty()) {
+            try {
+                List<SiteSettingsDTO.MenuItem> navLeftMenu = objectMapper.readValue(
+                    settings.getNavLeftMenuJson(),
+                    new TypeReference<List<SiteSettingsDTO.MenuItem>>() {}
+                );
+                dto.setNavLeftMenu(navLeftMenu);
+            } catch (JsonProcessingException e) {
+                log.error("Error parsing navLeftMenu JSON", e);
+                dto.setNavLeftMenu(new ArrayList<>());
+            }
+        } else {
+            dto.setNavLeftMenu(new ArrayList<>());
+        }
+
+        if (settings.getNavRightMenuJson() != null && !settings.getNavRightMenuJson().isEmpty()) {
+            try {
+                List<SiteSettingsDTO.MenuItem> navRightMenu = objectMapper.readValue(
+                    settings.getNavRightMenuJson(),
+                    new TypeReference<List<SiteSettingsDTO.MenuItem>>() {}
+                );
+                dto.setNavRightMenu(navRightMenu);
+            } catch (JsonProcessingException e) {
+                log.error("Error parsing navRightMenu JSON", e);
+                dto.setNavRightMenu(new ArrayList<>());
+            }
+        } else {
+            dto.setNavRightMenu(new ArrayList<>());
+        }
+
+        // Theme settings
+        dto.setFontPreset(settings.getFontPreset() != null ? settings.getFontPreset() : "elegant");
+        dto.setColorPalette(settings.getColorPalette() != null ? settings.getColorPalette() : "warmGold");
+        dto.setBorderRadius(settings.getBorderRadius() != null ? settings.getBorderRadius() : "subtle");
 
         return dto;
     }

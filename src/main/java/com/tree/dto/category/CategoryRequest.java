@@ -12,6 +12,8 @@ public class CategoryRequest {
     private String description;
     private String icon;
     private String imageUrl;
+    private String sectionTitle;
+    private String sectionSubtitle;
     private Integer sortOrder;
     private Boolean active;
     private String parentId;
