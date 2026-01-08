@@ -14,15 +14,15 @@ INSERT INTO banners (id, title, subtitle, button_text, button_link, image_url, s
 ON CONFLICT (id) DO NOTHING;
 
 -- Create categories
-INSERT INTO categories (id, name, slug, description, active, sort_order, created_at, updated_at) VALUES
-('c0000000-0000-0000-0000-000000000001', 'Cong nghe', 'cong-nghe', 'Tin tuc va bai viet ve cong nghe, lap trinh, AI', true, 1, NOW(), NOW()),
-('c0000000-0000-0000-0000-000000000002', 'Kinh doanh', 'kinh-doanh', 'Kinh nghiem kinh doanh, startup, khoi nghiep', true, 2, NOW(), NOW()),
-('c0000000-0000-0000-0000-000000000003', 'Doi song', 'doi-song', 'Bai viet ve cuoc song, suc khoe, lam dep', true, 3, NOW(), NOW()),
-('c0000000-0000-0000-0000-000000000004', 'Huong dan', 'huong-dan', 'Huong dan, thu thuat, tips hay', true, 4, NOW(), NOW())
+INSERT INTO categories (id, name, slug, description, active, sort_order, deleted, created_at, updated_at) VALUES
+('c0000000-0000-0000-0000-000000000001', 'Cong nghe', 'cong-nghe', 'Tin tuc va bai viet ve cong nghe, lap trinh, AI', true, 1, false, NOW(), NOW()),
+('c0000000-0000-0000-0000-000000000002', 'Kinh doanh', 'kinh-doanh', 'Kinh nghiem kinh doanh, startup, khoi nghiep', true, 2, false, NOW(), NOW()),
+('c0000000-0000-0000-0000-000000000003', 'Doi song', 'doi-song', 'Bai viet ve cuoc song, suc khoe, lam dep', true, 3, false, NOW(), NOW()),
+('c0000000-0000-0000-0000-000000000004', 'Huong dan', 'huong-dan', 'Huong dan, thu thuat, tips hay', true, 4, false, NOW(), NOW())
 ON CONFLICT (slug) DO NOTHING;
 
 -- Article 1: Complete React Guide
-INSERT INTO articles (id, title, slug, summary, content, content_html, featured_image, featured_image_alt, tags, reading_time, is_featured, allow_comments, status, view_count, meta_title, meta_description, meta_keywords, category_id, author_id, created_at, updated_at, published_at)
+INSERT INTO articles (id, title, slug, summary, content, content_html, featured_image, featured_image_alt, tags, reading_time, is_featured, allow_comments, status, view_count, meta_title, meta_description, meta_keywords, category_id, author_id, deleted, created_at, updated_at, published_at)
 SELECT
   'b0000000-0000-0000-0000-000000000001',
   'Huong dan hoc lap trinh React tu A den Z cho nguoi moi bat dau nam 2024',
@@ -477,11 +477,12 @@ Chuc ban thanh cong tren con duong tro thanh React Developer!',
   'react, reactjs, javascript, frontend, web development, hooks, component',
   'c0000000-0000-0000-0000-000000000001',
   (SELECT id FROM users WHERE email = 'admin@tree.com' LIMIT 1),
+  false,
   NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days'
 WHERE NOT EXISTS (SELECT 1 FROM articles WHERE slug = 'huong-dan-hoc-lap-trinh-react-tu-a-den-z-cho-nguoi-moi-bat-dau-nam-2024');
 
 -- Article 2: AI Guide
-INSERT INTO articles (id, title, slug, summary, content, content_html, featured_image, featured_image_alt, tags, reading_time, is_featured, allow_comments, status, view_count, meta_title, meta_description, meta_keywords, category_id, author_id, created_at, updated_at, published_at)
+INSERT INTO articles (id, title, slug, summary, content, content_html, featured_image, featured_image_alt, tags, reading_time, is_featured, allow_comments, status, view_count, meta_title, meta_description, meta_keywords, category_id, author_id, deleted, created_at, updated_at, published_at)
 SELECT
   'b0000000-0000-0000-0000-000000000002',
   'Tri tue nhan tao AI la gi? Tong quan ve AI va ung dung trong cuoc song',
@@ -715,11 +716,12 @@ AI la cong cu - va nhu moi cong cu khac, gia tri cua no phu thuoc vao cach chung
   'AI, artificial intelligence, machine learning, deep learning, chatgpt',
   'c0000000-0000-0000-0000-000000000001',
   (SELECT id FROM users WHERE email = 'admin@tree.com' LIMIT 1),
+  false,
   NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days'
 WHERE NOT EXISTS (SELECT 1 FROM articles WHERE slug = 'tri-tue-nhan-tao-ai-la-gi-tong-quan-ve-ai-va-ung-dung-trong-cuoc-song');
 
 -- Article 3: Startup Guide
-INSERT INTO articles (id, title, slug, summary, content, content_html, featured_image, featured_image_alt, tags, reading_time, is_featured, allow_comments, status, view_count, meta_title, meta_description, meta_keywords, category_id, author_id, created_at, updated_at, published_at)
+INSERT INTO articles (id, title, slug, summary, content, content_html, featured_image, featured_image_alt, tags, reading_time, is_featured, allow_comments, status, view_count, meta_title, meta_description, meta_keywords, category_id, author_id, deleted, created_at, updated_at, published_at)
 SELECT
   'b0000000-0000-0000-0000-000000000003',
   '15 buoc khoi nghiep thanh cong tu con so 0 danh cho nguoi moi bat dau',
@@ -998,11 +1000,12 @@ Chuc ban thanh cong tren con duong khoi nghiep!',
   'khoi nghiep, startup, kinh doanh, entrepreneur, business plan',
   'c0000000-0000-0000-0000-000000000002',
   (SELECT id FROM users WHERE email = 'admin@tree.com' LIMIT 1),
+  false,
   NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days'
 WHERE NOT EXISTS (SELECT 1 FROM articles WHERE slug = '15-buoc-khoi-nghiep-thanh-cong-tu-con-so-0-danh-cho-nguoi-moi-bat-dau');
 
 -- Article 4: Healthy Lifestyle
-INSERT INTO articles (id, title, slug, summary, content, content_html, featured_image, featured_image_alt, tags, reading_time, is_featured, allow_comments, status, view_count, meta_title, meta_description, meta_keywords, category_id, author_id, created_at, updated_at, published_at)
+INSERT INTO articles (id, title, slug, summary, content, content_html, featured_image, featured_image_alt, tags, reading_time, is_featured, allow_comments, status, view_count, meta_title, meta_description, meta_keywords, category_id, author_id, deleted, created_at, updated_at, published_at)
 SELECT
   'b0000000-0000-0000-0000-000000000004',
   '20 thoi quen song khoe giup ban song lau va hanh phuc hon',
@@ -1248,15 +1251,16 @@ Chuc ban luon khoe manh va hanh phuc!',
   'suc khoe, healthy lifestyle, thoi quen tot, song khoe, wellness',
   'c0000000-0000-0000-0000-000000000003',
   (SELECT id FROM users WHERE email = 'admin@tree.com' LIMIT 1),
+  false,
   NOW() - INTERVAL '10 days', NOW() - INTERVAL '10 days', NOW() - INTERVAL '10 days'
 WHERE NOT EXISTS (SELECT 1 FROM articles WHERE slug = '20-thoi-quen-song-khoe-giup-ban-song-lau-va-hanh-phuc-hon');
 
 -- Product Categories for Furniture
-INSERT INTO categories (id, name, slug, description, active, sort_order, created_at, updated_at) VALUES
-('c1000000-0000-0000-0000-000000000001', 'Ban ghe', 'ban-ghe', 'Ban ghe go tu nhien cao cap', true, 10, NOW(), NOW()),
-('c1000000-0000-0000-0000-000000000002', 'Giuong ngu', 'giuong-ngu', 'Giuong ngu go tu nhien', true, 11, NOW(), NOW()),
-('c1000000-0000-0000-0000-000000000003', 'Tu ke', 'tu-ke', 'Tu quan ao, ke sach go tu nhien', true, 12, NOW(), NOW()),
-('c1000000-0000-0000-0000-000000000004', 'Sofa', 'sofa', 'Sofa go va nem cao cap', true, 13, NOW(), NOW())
+INSERT INTO categories (id, name, slug, description, active, sort_order, deleted, created_at, updated_at) VALUES
+('c1000000-0000-0000-0000-000000000001', 'Ban ghe', 'ban-ghe', 'Ban ghe go tu nhien cao cap', true, 10, false, NOW(), NOW()),
+('c1000000-0000-0000-0000-000000000002', 'Giuong ngu', 'giuong-ngu', 'Giuong ngu go tu nhien', true, 11, false, NOW(), NOW()),
+('c1000000-0000-0000-0000-000000000003', 'Tu ke', 'tu-ke', 'Tu quan ao, ke sach go tu nhien', true, 12, false, NOW(), NOW()),
+('c1000000-0000-0000-0000-000000000004', 'Sofa', 'sofa', 'Sofa go va nem cao cap', true, 13, false, NOW(), NOW())
 ON CONFLICT (slug) DO NOTHING;
 
 -- Wood Furniture Products
