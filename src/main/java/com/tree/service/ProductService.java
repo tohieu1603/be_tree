@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,15 +39,15 @@ public class ProductService {
     // ==================== READ Operations ====================
 
     public PageResponse<ProductResponse> getAllProducts(Pageable pageable) {
-        return mapPage(productRepository.findAll(pageable));
+        return mapPage(productRepository.findByDeletedFalse(pageable));
     }
 
     public PageResponse<ProductResponse> getActiveProducts(Pageable pageable) {
-        return mapPage(productRepository.findByIsActiveTrue(pageable));
+        return mapPage(productRepository.findByIsActiveTrueAndDeletedFalse(pageable));
     }
 
     public PageResponse<ProductResponse> getProductsByCategory(UUID categoryId, Pageable pageable) {
-        return mapPage(productRepository.findByCategoryIdAndIsActiveTrue(categoryId, pageable));
+        return mapPage(productRepository.findByCategoryIdAndIsActiveTrueAndDeletedFalse(categoryId, pageable));
     }
 
     public PageResponse<ProductResponse> searchProducts(String keyword, Pageable pageable) {
@@ -54,7 +55,7 @@ public class ProductService {
     }
 
     public List<ProductResponse> getFeaturedProducts() {
-        return mapList(productRepository.findByIsFeaturedTrueAndIsActiveTrue());
+        return mapList(productRepository.findByIsFeaturedTrueAndIsActiveTrueAndDeletedFalse());
     }
 
     public List<ProductResponse> getRelatedProducts(UUID categoryId, UUID productId) {
@@ -67,10 +68,16 @@ public class ProductService {
 
     @Transactional
     public ProductResponse getBySlug(String slug) {
-        Product product = findOrThrow(productRepository.findBySlug(slug), ENTITY_NAME, "slug", slug);
+        Product product = findOrThrow(productRepository.findBySlugAndDeletedFalse(slug), ENTITY_NAME, "slug", slug);
         product.setViewCount(product.getViewCount() + 1);
         productRepository.save(product);
         return toResponse(product);
+    }
+
+    // ==================== TRASH Operations ====================
+
+    public PageResponse<ProductResponse> getDeletedProducts(Pageable pageable) {
+        return mapPage(productRepository.findByDeletedTrue(pageable));
     }
 
     // ==================== WRITE Operations ====================
@@ -154,12 +161,33 @@ public class ProductService {
 
     @Transactional
     public void delete(UUID id) {
-        log.info("Deleting product: {}", id);
+        log.info("Soft deleting product: {}", id);
+        Product product = findByIdOrThrow(productRepository::findById, id, ENTITY_NAME);
+        product.setDeleted(true);
+        product.setDeletedAt(LocalDateTime.now());
+        productRepository.save(product);
+        log.info("Product soft deleted: {}", id);
+    }
+
+    @Transactional
+    public ProductResponse restore(UUID id) {
+        log.info("Restoring product: {}", id);
+        Product product = findByIdOrThrow(productRepository::findById, id, ENTITY_NAME);
+        product.setDeleted(false);
+        product.setDeletedAt(null);
+        productRepository.save(product);
+        log.info("Product restored: {}", id);
+        return toResponse(product);
+    }
+
+    @Transactional
+    public void permanentDelete(UUID id) {
+        log.info("Permanently deleting product: {}", id);
         if (!productRepository.existsById(id)) {
             throw new ResourceNotFoundException(ENTITY_NAME, "id", id);
         }
         productRepository.deleteById(id);
-        log.info("Product deleted: {}", id);
+        log.info("Product permanently deleted: {}", id);
     }
 
     // ==================== Helper Methods ====================
@@ -215,6 +243,8 @@ public class ProductService {
                 .category(product.getCategory() != null ? CategoryResponse.from(product.getCategory()) : null)
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
+                .deleted(product.getDeleted())
+                .deletedAt(product.getDeletedAt())
                 .build();
     }
 }

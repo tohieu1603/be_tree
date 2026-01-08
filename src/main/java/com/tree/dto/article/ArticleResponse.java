@@ -59,6 +59,8 @@ public class ArticleResponse {
     private AuthorDto author;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean deleted;
+    private LocalDateTime deletedAt;
 
     @Data
     @Builder
@@ -112,7 +114,9 @@ public class ArticleResponse {
                 .status(article.getStatus().name())
                 .viewCount(article.getViewCount())
                 .createdAt(article.getCreatedAt())
-                .updatedAt(article.getUpdatedAt());
+                .updatedAt(article.getUpdatedAt())
+                .deleted(article.getDeleted())
+                .deletedAt(article.getDeletedAt());
 
         if (article.getCategory() != null) {
             builder.category(CategoryResponse.from(article.getCategory()));

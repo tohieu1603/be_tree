@@ -39,4 +39,6 @@ public class ProductResponse {
     private CategoryResponse category;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean deleted;
+    private LocalDateTime deletedAt;
 }

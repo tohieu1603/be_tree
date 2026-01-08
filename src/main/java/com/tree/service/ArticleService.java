@@ -36,20 +36,27 @@ public class ArticleService {
     private final IndexNowService indexNowService;
 
     public PageResponse<ArticleResponse> getAllArticles(Pageable pageable) {
-        Page<ArticleResponse> page = articleRepository.findAll(pageable)
+        Page<ArticleResponse> page = articleRepository.findByDeletedFalse(pageable)
                 .map(ArticleResponse::from);
         return PageResponse.from(page);
     }
 
     public PageResponse<ArticleResponse> getPublishedArticles(Pageable pageable) {
-        Page<ArticleResponse> page = articleRepository.findByStatus(Status.PUBLISHED, pageable)
+        Page<ArticleResponse> page = articleRepository.findByStatusAndDeletedFalse(Status.PUBLISHED, pageable)
                 .map(ArticleResponse::from);
         return PageResponse.from(page);
     }
 
     public PageResponse<ArticleResponse> getArticlesByCategory(UUID categoryId, Pageable pageable) {
         Page<ArticleResponse> page = articleRepository
-                .findByCategoryIdAndStatus(categoryId, Status.PUBLISHED, pageable)
+                .findByCategoryIdAndStatusAndDeletedFalse(categoryId, Status.PUBLISHED, pageable)
+                .map(ArticleResponse::from);
+        return PageResponse.from(page);
+    }
+
+    // Trash methods
+    public PageResponse<ArticleResponse> getTrashArticles(Pageable pageable) {
+        Page<ArticleResponse> page = articleRepository.findByDeletedTrue(pageable)
                 .map(ArticleResponse::from);
         return PageResponse.from(page);
     }
@@ -63,13 +70,14 @@ public class ArticleService {
 
     public ArticleResponse getById(UUID id) {
         Article article = articleRepository.findById(id)
+                .filter(a -> !a.getDeleted())
                 .orElseThrow(() -> new ResourceNotFoundException("Article", "id", id));
         return ArticleResponse.from(article);
     }
 
     @Transactional
     public ArticleResponse getBySlug(String slug) {
-        Article article = articleRepository.findBySlug(slug)
+        Article article = articleRepository.findBySlugAndDeletedFalse(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Article", "slug", slug));
 
         article.setViewCount(article.getViewCount() + 1);
@@ -263,21 +271,55 @@ public class ArticleService {
 
     @Transactional
     public void delete(UUID id) {
-        log.info("Deleting article: {}", id);
+        log.info("Soft deleting article: {}", id);
 
         Article article = articleRepository.findById(id)
+                .filter(a -> !a.getDeleted())
                 .orElseThrow(() -> new ResourceNotFoundException("Article", "id", id));
 
-        String slug = article.getSlug();
-        boolean wasPublished = article.getStatus() == Status.PUBLISHED;
-
-        articleRepository.delete(article);
-        log.info("Article deleted: {}", id);
+        article.setDeleted(true);
+        article.setDeletedAt(LocalDateTime.now());
+        articleRepository.save(article);
+        log.info("Article soft deleted: {}", id);
 
         // Notify Google if was published
-        if (wasPublished) {
-            googleIndexingService.notifyArticleDeleted(slug);
+        if (article.getStatus() == Status.PUBLISHED) {
+            googleIndexingService.notifyArticleDeleted(article.getSlug());
         }
+    }
+
+    @Transactional
+    public ArticleResponse restore(UUID id) {
+        log.info("Restoring article: {}", id);
+
+        Article article = articleRepository.findById(id)
+                .filter(Article::getDeleted)
+                .orElseThrow(() -> new ResourceNotFoundException("Article in trash", "id", id));
+
+        article.setDeleted(false);
+        article.setDeletedAt(null);
+        articleRepository.save(article);
+        log.info("Article restored: {}", id);
+
+        // Notify search engines if published
+        if (article.getStatus() == Status.PUBLISHED) {
+            googleIndexingService.notifyArticlePublished(article.getSlug());
+            indexNowService.notifyArticlePublished(article.getSlug());
+        }
+
+        return ArticleResponse.from(article);
+    }
+
+    @Transactional
+    public void permanentDelete(UUID id) {
+        log.info("Permanently deleting article: {}", id);
+
+        Article article = articleRepository.findById(id)
+                .filter(Article::getDeleted)
+                .orElseThrow(() -> new ResourceNotFoundException("Article in trash", "id", id));
+
+        articleRepository.delete(article);
+        log.info("Article permanently deleted: {}", id);
     }
 
     public String convertHtmlToMarkdown(String html) {

@@ -55,9 +55,29 @@ public class AdminCategoryController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete category")
+    @Operation(summary = "Delete category (soft delete)")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
         categoryService.delete(id);
-        return ResponseEntity.ok(ApiResponse.success("Category deleted", null));
+        return ResponseEntity.ok(ApiResponse.success("Danh mục đã được chuyển vào thùng rác", null));
+    }
+
+    // Trash endpoints
+    @GetMapping("/trash")
+    @Operation(summary = "Get all deleted categories")
+    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getTrash() {
+        return ResponseEntity.ok(ApiResponse.success(categoryService.getTrashCategories()));
+    }
+
+    @PostMapping("/{id}/restore")
+    @Operation(summary = "Restore category from trash")
+    public ResponseEntity<ApiResponse<CategoryResponse>> restore(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.success("Danh mục đã được khôi phục", categoryService.restore(id)));
+    }
+
+    @DeleteMapping("/{id}/permanent")
+    @Operation(summary = "Permanently delete category")
+    public ResponseEntity<ApiResponse<Void>> permanentDelete(@PathVariable UUID id) {
+        categoryService.permanentDelete(id);
+        return ResponseEntity.ok(ApiResponse.success("Danh mục đã được xoá vĩnh viễn", null));
     }
 }

@@ -56,15 +56,37 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete product")
+    @Operation(summary = "Soft delete product (move to trash)")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
         productService.delete(id);
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.ok(ApiResponse.success("Product moved to trash", null));
     }
 
     @GetMapping("/featured")
     @Operation(summary = "Get featured products")
     public ResponseEntity<ApiResponse<List<ProductResponse>>> getFeatured() {
         return ResponseEntity.ok(ApiResponse.success(productService.getFeaturedProducts()));
+    }
+
+    // ==================== TRASH Operations ====================
+
+    @GetMapping("/trash")
+    @Operation(summary = "Get deleted products (trash)")
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> getTrash(
+            @PageableDefault(size = 10, sort = "deletedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success(productService.getDeletedProducts(pageable)));
+    }
+
+    @PostMapping("/{id}/restore")
+    @Operation(summary = "Restore product from trash")
+    public ResponseEntity<ApiResponse<ProductResponse>> restore(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.success("Product restored", productService.restore(id)));
+    }
+
+    @DeleteMapping("/{id}/permanent")
+    @Operation(summary = "Permanently delete product")
+    public ResponseEntity<ApiResponse<Void>> permanentDelete(@PathVariable UUID id) {
+        productService.permanentDelete(id);
+        return ResponseEntity.ok(ApiResponse.success("Product permanently deleted", null));
     }
 }

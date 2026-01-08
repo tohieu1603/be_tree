@@ -32,6 +32,8 @@ public class CategoryResponse {
     @Builder.Default
     private List<CategoryResponse> children = new ArrayList<>();
     private LocalDateTime createdAt;
+    private Boolean deleted;
+    private LocalDateTime deletedAt;
 
     // Simple conversion without children (for flat list)
     public static CategoryResponse from(Category category) {
@@ -46,11 +48,13 @@ public class CategoryResponse {
                 .sectionSubtitle(category.getSectionSubtitle())
                 .sortOrder(category.getSortOrder())
                 .active(category.isActive())
-                .articleCount(category.getArticles() != null ? category.getArticles().size() : 0)
+                .articleCount(category.getArticles() != null ? (int) category.getArticles().stream().filter(a -> !a.getDeleted()).count() : 0)
                 .parentId(category.getParent() != null ? category.getParent().getId().toString() : null)
                 .parentName(category.getParent() != null ? category.getParent().getName() : null)
                 .level(category.getLevel())
                 .createdAt(category.getCreatedAt())
+                .deleted(category.getDeleted())
+                .deletedAt(category.getDeletedAt())
                 .build();
     }
 

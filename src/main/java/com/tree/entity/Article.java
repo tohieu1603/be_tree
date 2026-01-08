@@ -167,6 +167,14 @@ public class Article extends BaseEntity {
     @JoinColumn(name = "author_id")
     private User author;
 
+    // Soft delete fields
+    @Builder.Default
+    @Column(name = "deleted")
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
     public enum Status {
         DRAFT, PUBLISHED, ARCHIVED
     }

@@ -59,10 +59,31 @@ public class AdminArticleController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete article")
+    @Operation(summary = "Delete article (soft delete)")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
         articleService.delete(id);
-        return ResponseEntity.ok(ApiResponse.success("Article deleted", null));
+        return ResponseEntity.ok(ApiResponse.success("Bài viết đã được chuyển vào thùng rác", null));
+    }
+
+    // Trash endpoints
+    @GetMapping("/trash")
+    @Operation(summary = "Get all deleted articles")
+    public ResponseEntity<ApiResponse<PageResponse<ArticleResponse>>> getTrash(
+            @PageableDefault(size = 10, sort = "deletedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success(articleService.getTrashArticles(pageable)));
+    }
+
+    @PostMapping("/{id}/restore")
+    @Operation(summary = "Restore article from trash")
+    public ResponseEntity<ApiResponse<ArticleResponse>> restore(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.success("Bài viết đã được khôi phục", articleService.restore(id)));
+    }
+
+    @DeleteMapping("/{id}/permanent")
+    @Operation(summary = "Permanently delete article")
+    public ResponseEntity<ApiResponse<Void>> permanentDelete(@PathVariable UUID id) {
+        articleService.permanentDelete(id);
+        return ResponseEntity.ok(ApiResponse.success("Bài viết đã được xoá vĩnh viễn", null));
     }
 
     @PostMapping("/convert-html")
